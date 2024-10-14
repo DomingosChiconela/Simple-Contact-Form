@@ -40,7 +40,7 @@ export const ContactForm  = () =>{
                 setPopUp({
                     open:true,
                     success:true,
-                    message:"Cadastro realiado com sucesso.",
+                    message:"Cadastro realizado com sucesso.",
                   })
         
                   setTimeout(()=>{

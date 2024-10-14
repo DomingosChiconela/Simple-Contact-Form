@@ -1,13 +1,110 @@
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { Link, useNavigate } from "react-router-dom"
+import { PopUp } from "../PopUp"
+import axios from "axios";
 
+
+
+export const StylesError = " text-red-500"
+export const StylesDivForm = "flex flex-col  gap-1 mb-1"
+export const StylesInput= " rounded-lg  p-1 outline-none focus:border focus:border-orange-500  bg-slate-50"
+export const StylesLabel= ""
+export const h3Syles =  "text-blue font-medium"
 
 export const ContactForm  = () =>{
+    const  {register,handleSubmit,formState:{errors},reset} =  useForm()
+    const  navegate  =  useNavigate()
+    const[popUp,setPopUp] = useState({
+        open:false,
+        success:false,
+        message:""
+      })
+
+      const onSubmit =  async (data)=>{
+     
+        reset()
+        try{
+            //simulando o envio de dados para o backend optei em usar axios porem podes usar api nativa fetch para fazer as requisicoes 
+           // const response = await axios.post("/api/example/contactForm",data);
+           
+
+           // simulando que a requisicao foi bem sucedida e que o servidor respondeu com status 201 (para isso farei uma gambiara apenas passando um objecto com a propriedade status e valor 201 para a constante response)
+
+           const response = {
+            status:201
+           }
+
+            if(response.status == 201){
+
+                setPopUp({
+                    open:true,
+                    success:true,
+                    message:"Cadastro realiado com sucesso.",
+                  })
+        
+                  setTimeout(()=>{
+                    setPopUp(
+                        {
+                        open:false,
+                        success:false,
+                        message:""
+                      }
+                     )
+                     navegate("/about")
+                  },4000)  
+
+              
+                return
+
+            }
+            setPopUp({
+                open:true,
+                success:false,
+                message:"Por favor,tente novamente. ",
+              })
+    
+              setTimeout(()=>{
+                setPopUp(
+                    {
+                    open:false,
+                    success:false,
+                    message:""
+                  }
+                 )
+              },4000)
+
+        }catch(error){
+
+        console.log("erro ao realizar o cadastro")
+        console.error(error)
+         setPopUp({
+            open:true,
+            success:false,
+            message:"Por favor,tente novamente. ",
+          })
+
+          setTimeout(()=>{
+            setPopUp(
+                {
+                open:false,
+                success:false,
+                message:""
+              }
+             )
+          },4000)
+
+         
+        }
+        
+    }
 
     return(
         <>
-            <div className="w-screen h-screen   flex flex-col justify-center items-center">
+            <div className="w-screen h-screen   flex flex-col justify-center items-center ">
                 
                     
-                <h3 className="text-center font-semibold text-2xl mb-1">Cadastro</h3>
+                <h3 className="text-center font-semibold text-2xl mb-1 text-orange-400">Contact</h3>
                 
                 <div className="w-full px-5 sm:w-fit sm:p-0">
                   
@@ -43,52 +140,20 @@ export const ContactForm  = () =>{
                         </div>
 
                         <div className={`${StylesDivForm}`}>
-                            <label className={`${StylesLabel}`} htmlFor="">Contacto</label>
-                            <input type="text" name="contact" id="contact" className={`${StylesInput}`} {...register('contact', {
-                                required: "O contacto é obrigatório",
-                                pattern: {
-                                    value: /^[0-9]+$/,
-                                    message: "O contacto deve conter apenas números inteiros"
-                                },
-                                maxLength: {
-                                    value: 9,
-                                    message: "O contacto deve ter no máximo 9 caracteres"
-                                },
+                                <label className={`${StylesLabel}`} htmlFor="message">Messagem</label>
+                                <textarea   name="message" id="message" className={`${StylesInput} p-6`} {...register('message',{
+                                    required:"A messagem é obrigatoria.",
                                 
-                                validate: value =>value.trim() !== '' ||"O email não pode ser apenas espaços em branco"
 
-                            })} />
-                            {errors.contact && <p className={`${StylesError}`} >{errors.contact.message}</p>}
+                                    validate: value =>value.trim() !== '' ||"A messagem não pode ser apenas espaços em branco"
+                                })} ></textarea>
+                                {errors.message && <p className={`${StylesError}`} >{errors.message.message}</p>}
                         </div>
 
-                        <div className={`${StylesDivForm}`}>
-                                <label className={`${StylesLabel}`} htmlFor="">Senha</label>
-                                    <input type="password" name="password" id="password" className={`${StylesInput}`} {...register('password',{
-                                            required:"O password é obrigatório",
-                                        
 
-                                            validate: value =>value.trim() !== '' ||"O password não pode ser apenas espaços em branco"
-                                        })} />
-                                {errors.password && <p className={`${StylesError}`} >{errors.password.message}</p>}
-                        </div>
-
-                        <div className={`${StylesDivForm}`}>
-                                <label className={`${StylesLabel}`} htmlFor="">Confirmar senha</label>
-                                    <input type="password" name="confirmPassword" id="confirmPassword" className={`${StylesInput}`} {...register('confirmPassword',{
-                                            required:"O confirmPassword é obrigatório",
-                                           
-                                            validate: {
-                                                notEmpty: value => value.trim() !== '' || "A confirmação não pode ser apenas espaços em branco",
-                                                matchesPassword: value => value === watch('password') || "As senhas não são iguais"
-                                              }
-                                        })} />
-                                {errors.confirmPassword && <p className={`${StylesError}`} >{errors.confirmPassword.message}</p>}
-
-                        </div>
                         
-                                <Link to={"/login"} className="text-zinc-800 text-sm hover:text-primary/85 active:text-primary/45">Ja possui uma conta?</Link>
                         <div className=" text-center">
-                            <button type="submit" className="py-2 px-4 bg-primary hover:bg-primary/85 active:bg-primary/45 rounded-xl font-medium text-white my-6    ">Cadastrar</button>  
+                            <button type="submit" className="py-2 px-4 bg-orange-500 hover:bg-orange-500/85 active:bg-orange-500/45 rounded-xl font-medium text-white my-6    ">Enviar</button>  
                         </div>
                                 
 
